@@ -12,7 +12,7 @@ class Round(models.Model):
     name = models.CharField(max_length=100)
     order = models.IntegerField()
 
-    workout = models.ForeignKey(Workout, null=True, related_name='rounds', on_delete=models.SET_NULL)
+    workout = models.ForeignKey(Workout, null=True, on_delete=models.SET_NULL, related_name='rounds')
 
     def __str__(self):
         return '{}. Order: {}'.format(self.name, self.order)
@@ -20,7 +20,7 @@ class Round(models.Model):
 
 class Exercise(models.Model):
     name = models.CharField(max_length=100)
-    rounds = models.ManyToManyField(Round, related_name='exercises', through='RoundSet')
+    rounds = models.ManyToManyField(Round, through='RoundSet', related_name='exercises')
 
     def __str__(self):
         return self.name
@@ -41,7 +41,7 @@ class RoundSet(models.Model):
 class Muscle(models.Model):
     name = models.CharField(max_length=100)
 
-    exercises = models.ManyToManyField(Exercise, related_name='muscles')
+    exercises = models.ManyToManyField(Exercise, blank=True, related_name='muscles')
 
     def __str__(self):
         return self.name

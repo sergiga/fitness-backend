@@ -18,9 +18,18 @@ class Round(models.Model):
         return '{}. Order: {}'.format(self.name, self.order)
 
 
+class Equipment(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+
 class Exercise(models.Model):
     name = models.CharField(max_length=100)
     rounds = models.ManyToManyField(Round, through='RoundSet', related_name='exercises')
+
+    equipment = models.ForeignKey(Equipment, null=True, on_delete=models.SET_NULL, related_name='exercises')
 
     def __str__(self):
         return self.name

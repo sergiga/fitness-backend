@@ -6,7 +6,7 @@ from workouts.views import (
 
 router = routers.DefaultRouter()
 
-router.register(r'words', WorkoutViewSet, base_name='words')
+router.register(r'workouts', WorkoutViewSet, base_name='words')
 router.register(r'rounds', RoundViewSet, base_name='rounds')
 router.register(r'round_sets', RoundSetViewSet, base_name='round_sets')
 router.register(r'exercises', ExerciseViewSet, base_name='exercises')

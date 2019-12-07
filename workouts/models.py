@@ -1,56 +1,99 @@
 from django.db import models
+from core.models import BaseModel
+from core.utils import Level, RepUnit
 
-
-class Workout(models.Model):
+class Workout(BaseModel):
     name = models.CharField(max_length=100)
+    level = models.IntegerField(
+        choices=Level.choices(),
+        default=Level.INTERMEDIATE
+    )
 
     def __str__(self):
         return self.name
 
 
-class Round(models.Model):
-    name = models.CharField(max_length=100)
+class WorkoutSet(BaseModel):
+    sets = models.IntegerField()
     order = models.IntegerField()
 
-    workout = models.ForeignKey(Workout, null=True, on_delete=models.SET_NULL, related_name='rounds')
+    workout = models.ForeignKey(
+        'workouts.Workout',
+        related_name='workout_sets',
+        on_delete=models.CASCADE
+    )
 
     def __str__(self):
-        return '{}. Order: {}'.format(self.name, self.order)
+        return '{} {}'.format(self.workout.name, self.order)
 
 
-class Equipment(models.Model):
-    name = models.CharField(max_length=100)
+class ExerciseInSet(BaseModel):
+    reps = models.IntegerField()
+    rep_unit = models.IntegerField(
+        choices=RepUnit.choices(),
+        default=RepUnit.REPS
+    )
 
-    def __str__(self):
-        return self.name
-
-
-class Exercise(models.Model):
-    name = models.CharField(max_length=100)
-    rounds = models.ManyToManyField(Round, through='RoundSet', related_name='exercises')
-
-    equipment = models.ForeignKey(Equipment, null=True, on_delete=models.SET_NULL, related_name='exercises')
-
-    def __str__(self):
-        return self.name
-
-
-class RoundSet(models.Model):
-    order = models.IntegerField()
-    repetitions = models.IntegerField(null=True)
-    seconds = models.IntegerField(null=True)
-
-    workout_round = models.ForeignKey(Round, related_name='sets', on_delete=models.CASCADE)
-    exercise = models.ForeignKey(Exercise, related_name='sets', on_delete=models.CASCADE)
+    workout_set = models.ForeignKey(
+        'workouts.WorkoutSet',
+        related_name='exercises_in_set',
+        on_delete=models.CASCADE
+    )
+    exercise = models.ForeignKey(
+        'exercises.Exercise',
+        related_name='exercises_in_set',
+        on_delete=models.CASCADE
+    )
+    parent = models.OneToOneField(
+        'self',
+        related_name='child',
+        on_delete=models.CASCADE
+    )
 
     def __str__(self):
-        return '{} - {}. Order: {}'.format(self.workout_round.name, self.exercise.name, self.order)
+        return '{} - {}'.format(
+            self.workout_set.__str__(),
+            self.exercise.__str__()
+        )
 
+class Training(BaseModel):
+    date = models.DateField()
+    start_time = models.DateTimeField(null=True)
+    end_time = models.DateTimeField(null=True)
 
-class Muscle(models.Model):
-    name = models.CharField(max_length=100)
-
-    exercises = models.ManyToManyField(Exercise, blank=True, related_name='muscles')
+    workout = models.ForeignKey(
+        'workouts.Workout',
+        related_name='trainings',
+        on_delete=models.CASCADE
+    )
+    exercise_in_set = models.ForeignKey(
+        'workouts.ExerciseInSet',
+        related_name='trainings',
+        on_delete=models.CASCADE
+    )
 
     def __str__(self):
-        return self.name
+        return '{} - {}'.format(
+            self.workout.__str__(),
+            self.date
+        )
+
+class TrainingExercise(BaseModel):
+    reps = models.IntegerField()
+
+    workout = models.ForeignKey(
+        'workouts.Workout',
+        related_name='training_exercises',
+        on_delete=models.CASCADE
+    )
+    exercise_in_set = models.ForeignKey(
+        'workouts.ExerciseInSet',
+        related_name='training_exercises',
+        on_delete=models.CASCADE
+    )
+
+    def __str__(self):
+        return '{} - {}'.format(
+            self.workout.__str__(),
+            self.exercise_in_set.__str__()
+        )

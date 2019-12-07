@@ -50,7 +50,7 @@ class MuscleInExercise(BaseModel):
 class EquipmentInExercise(BaseModel):
     exercise = models.ForeignKey(
         'exercises.Exercise',
-        related_name='muscles_in_exercise',
+        related_name='equipments_in_exercise',
         on_delete=models.CASCADE
     )
     equipment = models.ForeignKey(

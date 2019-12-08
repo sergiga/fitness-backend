@@ -33,27 +33,24 @@ class ExerciseInSet(BaseModel):
         choices=RepUnit.choices(),
         default=RepUnit.REPS
     )
+    group = models.IntegerField()
+    group_order = models.IntegerField()
 
     workout_set = models.ForeignKey(
         'workouts.WorkoutSet',
         related_name='exercises_in_set',
         on_delete=models.CASCADE
     )
-    exercise = models.ForeignKey(
-        'exercises.Exercise',
-        related_name='exercises_in_set',
-        on_delete=models.CASCADE
-    )
-    parent = models.OneToOneField(
-        'self',
-        related_name='child',
-        on_delete=models.CASCADE
-    )
+    # exercise = models.ForeignKey(
+    #     'exercises.Exercise',
+    #     related_name='exercises_in_set',
+    #     on_delete=models.CASCADE
+    # )
 
     def __str__(self):
         return '{} - {}'.format(
             self.workout_set.__str__(),
-            self.exercise.__str__()
+            'self.exercise.__str__()'
         )
 
 class Training(BaseModel):

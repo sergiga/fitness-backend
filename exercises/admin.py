@@ -1,3 +1,12 @@
 from django.contrib import admin
+from exercises.models import (
+    Exercise, Equipment, Muscle,
+    EquipmentInExercise, MuscleInExercise
+)
 
-# Register your models here.
+@admin.register(
+    Exercise, Equipment, Muscle,
+    EquipmentInExercise, MuscleInExercise
+)
+class WorkoutAdmin(admin.ModelAdmin):
+    pass

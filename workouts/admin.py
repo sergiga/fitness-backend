@@ -8,5 +8,5 @@ from workouts.models import (
     Workout, WorkoutSet, ExerciseInSet,
     Training, TrainingExercise
 )
-class AuthorAdmin(admin.ModelAdmin):
+class WorkoutAdmin(admin.ModelAdmin):
     pass

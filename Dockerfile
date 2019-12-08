@@ -1,5 +1,6 @@
 FROM python:3
 ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE 1
 RUN mkdir /opt/gymbackend
 WORKDIR /opt/gymbackend
 COPY requirements.txt /opt/gymbackend

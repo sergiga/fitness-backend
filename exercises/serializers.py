@@ -14,7 +14,14 @@ class ExerciseSerializer(serializers.ModelSerializer):
 
     def to_representation(self, value):
         data = super(ExerciseSerializer, self).to_representation(value)
-        data['muscles'] = [m.id for m in Muscle.objects.filter(muscles_in_exercise__exercise=value)]
+        data['muscles_in_exercise'] = [
+            {
+                'id': muscle_in_exercise.id,
+                'muscle_id': muscle_in_exercise.muscle_id,
+                'exercise_id': muscle_in_exercise.exercise_id
+            }
+            for muscle_in_exercise in value.muscles_in_exercise.all().select_related('muscle')
+        ]
         return data
 
     def to_internal_value(self, data):
@@ -40,3 +47,12 @@ class ExerciseSerializer(serializers.ModelSerializer):
                 muscle=muscle
             )
         return instance
+
+
+class MuscleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Muscle
+        fields = [
+            'id',
+            'name'
+        ]
